@@ -1,0 +1,10 @@
+# OTM8009A display driver configuration options
+
+# Copyright (c) 2020 Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+config OTM8009A
+	bool "OTM8009A display driver"
+	depends on MIPI_DSI
+	help
+	  Enable driver for OTM8009A display driver.

@@ -1,0 +1,30 @@
+# Copyright (c) 2020 Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+description: OTM8009A display controller
+
+compatible: "orisetech,otm8009a"
+
+include: mipi-dsi-device.yaml
+
+properties:
+    reset-gpios:
+      type: phandle-array
+      required: false
+      description: Reset pin (active low).
+
+    bl-gpios:
+      type: phandle-array
+      required: false
+      description: Back-light pin.
+
+    rotation:
+      type: int
+      default: 0
+      enum:
+        - 0
+        - 90
+        - 180
+        - 270
+      description:
+        Display rotation (CW) in degrees.
