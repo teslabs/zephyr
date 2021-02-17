@@ -1,0 +1,18 @@
+# Copyright (c) 2020, Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+description: STM32 LTDC TFT-LCD controller
+
+compatible: "st,stm32-ltdc"
+
+include: base.yaml
+
+properties:
+    reg:
+      required: true
+
+    label:
+      required: true
+
+    clocks:
+      required: true

@@ -71,4 +71,8 @@ config MEMC_STM32
 	default y
 	depends on MEMC
 
+config MIPI_DSI_STM32
+	default y
+	depends on MIPI_DSI
+
 endif # SOC_FAMILY_STM32

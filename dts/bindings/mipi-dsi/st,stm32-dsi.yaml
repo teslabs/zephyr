@@ -1,0 +1,76 @@
+# Copyright (c) 2020, Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+description: STM32 MIPI-DSI Host Controller
+
+compatible: "st,stm32-dsi"
+
+include: mipi-dsi-host.yaml
+
+properties:
+    reg:
+      required: true
+
+    clocks:
+      required: true
+
+    st,ltdc:
+      type: phandle
+      required: true
+      description: |
+        Instance of the LTDC peripheral. MIPI-DSI driver takes care of enabling
+        LTDC to work with the DSI peripheral.
+
+    st,pll:
+      type: array
+      required: true
+      description: |
+        PLL settings in the following order: NDIV, IDF, ODF. Valid ranges are:
+
+        - NDIV: [10, 125]
+        - IDF: [1, 7]
+        - ODF: 1, 2, 4, 8
+
+        The PLL output clock (HS) is the clock fed to the D-PHY. It must be
+        between 80 MHz and 500 MHz. The D-PHY uses the HS clock to generate a
+        half-rate DDR clock which is transmitted to the display using the
+        clock lane. The D-PHY also divides the HS clock by eight to generate the
+        Lane_byte_clock which is fed to the DSI Host. The following formulae can
+        be used to obtain the clock values:
+
+          fVCO = (HSE / IDF) * 2 * NDIV
+          HS = fVCO / (2 * ODF)
+          Lane_byte_clock = HS / 8
+
+        Example:
+
+          - HSE: 25 MHz
+          - NDIV: 20
+          - IDF: 1
+          - ODF: 1
+
+          fVCO = (25 MHz / 1) * 2 * 20 = 1 GHz
+          HS = 1 GHz / (2 * 1) = 500 MHz
+          Lane_byte_clock = 500 Mhz / 8 = 62.5 MHz
+
+        Ref. AN4860 rev. 2, 5.1.2.
+
+    st,txeckdiv:
+      type: int
+      required: true
+      description: |
+        TX escape clock division (TXECKDIV). TXECKDIV must be set to a value
+        higher than 2. Values 0 or 1 disable the generation of the TX escape
+        clock.
+
+        The TX escape clock (tx_esc_clk) is used in LP mode. It needs to be less
+        than 20 MHz. It is given by:
+
+          tx_esc_clk = Lane_byte_clk / TXECKDIV.
+
+        Example:
+
+          - Lane_byte_clk: 62.5 MHz
+          - TXECKDIV: 4
+
+          tx_esc_clk = 62.5 MHz / 4 = 15.625 MHz

@@ -1,0 +1,13 @@
+# Copyright (c) 2020 Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+config MIPI_DSI_STM32
+	bool "Enable STM32 MIPI-DSI Host Controller"
+	depends on SOC_SERIES_STM32H7X
+	select USE_STM32_HAL_DSI
+	select USE_STM32_HAL_LTDC
+	help
+	  Enable STM32 MIPI-DSI Host Controller.
+
+	  Note that PLL3 needs to be configured to be able to use the LTDC
+	  peripheral.
