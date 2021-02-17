@@ -127,3 +127,31 @@
 		};
 	};
 };
+
+&ltdc {
+	status = "okay";
+};
+
+&dsi {
+	status = "okay";
+
+	st,ltdc = <&ltdc>;
+	/* clocks:
+	 * - HS: 500 MHz
+	 * - Lane byte clock = 62.5 MHz
+	 * - TX Escape clock = 15.625 MHz
+	 */
+	st,pll = <100>, <5>, <1>;
+	st,txeckdiv = <4>;
+
+	otm8009a@0 {
+		compatible = "orisetech,otm8009a";
+		reg = <0>;
+		label = "DISPLAY";
+		data-lanes = <2>;
+		pixel-format = <MIPI_DSI_PIXFMT_RGB565>;
+		rotation = <90>;
+		reset-gpios = <&gpiog 3 GPIO_ACTIVE_LOW>;
+		bl-gpios = <&gpioj 12 GPIO_ACTIVE_HIGH>;
+	};
+};
