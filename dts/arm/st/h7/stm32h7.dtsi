@@ -742,6 +742,16 @@
 			label = "BACKUP_SRAM";
 			status = "disabled";
 		};
+
+		ltdc: ltdc@50001000 {
+			compatible = "st,stm32-ltdc";
+			reg = <0x50001000 0x400>;
+			clocks = <&rcc STM32_CLOCK_BUS_APB3 0x00000008>;
+			interrupts = <88 0>, <89 0>;
+			interrupt-names = "global", "error";
+			label = "STM32_LTDC";
+			status = "disabled";
+		};
 	};
 };
 

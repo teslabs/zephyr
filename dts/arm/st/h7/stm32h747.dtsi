@@ -1,7 +1,24 @@
 /*
  * Copyright (c) 2019 Linaro Limited
+ * Copyright (c) 2020 Teslabs Engineering S.L.
  *
  * SPDX-License-Identifier: Apache-2.0
  */
 
 #include <st/h7/stm32h745.dtsi>
+#include <dt-bindings/mipi_dsi/mipi_dsi.h>
+
+/ {
+	soc {
+		dsi: dsi@50000000 {
+			compatible = "st,stm32-dsi";
+			reg = <0x50000000 0x400>;
+			clocks = <&rcc STM32_CLOCK_BUS_APB3 0x00000010>;
+			interrupts = <123 0>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			label = "STM32_DSI";
+			status = "disabled";
+		};
+	};
+};
