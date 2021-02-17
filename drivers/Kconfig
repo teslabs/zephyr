@@ -109,4 +109,6 @@ source "drivers/psci/Kconfig"
 
 source "drivers/edac/Kconfig"
 
+source "drivers/mipi_dsi/Kconfig"
+
 endmenu
