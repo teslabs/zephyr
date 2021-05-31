@@ -8,7 +8,6 @@
 #define ZEPHYR_INCLUDE_PM_DEVICE_H_
 
 #include <kernel.h>
-#include <sys/atomic.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -109,8 +108,8 @@ struct pm_device {
 	/* Following are packed fields protected by #lock. */
 	/** Device pm enable flag */
 	bool enable : 1;
-	/* Following are packed fields accessed with atomic bit operations. */
-	atomic_t atomic_flags;
+	/** Flag that indicates if device is busy or not. */
+	bool busy;
 	/** Device usage count */
 	uint32_t usage;
 	/** Device idle internal power state */
@@ -120,11 +119,6 @@ struct pm_device {
 	/** Event conditional var to listen to the sync request events */
 	struct k_condvar condvar;
 };
-
-/** Bit position in device_pm::atomic_flags that records whether the
- * device is busy.
- */
-#define PM_DEVICE_ATOMIC_FLAGS_BUSY_BIT 0
 
 /**
  * @brief Get name of device PM state

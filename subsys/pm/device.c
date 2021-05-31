@@ -155,10 +155,16 @@ int pm_device_any_busy_check(void)
 	const struct device *dev = __device_start;
 
 	while (dev < __device_end) {
-		if (atomic_test_bit(&dev->pm->atomic_flags,
-				    PM_DEVICE_ATOMIC_FLAGS_BUSY_BIT)) {
+		bool busy;
+
+		(void)k_mutex_lock(&dev->pm->lock, K_FOREVER);
+		busy = dev->pm->busy;
+		(void)k_mutex_unlock(&dev->pm->lock);
+
+		if (busy) {
 			return -EBUSY;
 		}
+
 		++dev;
 	}
 
@@ -167,21 +173,29 @@ int pm_device_any_busy_check(void)
 
 int pm_device_busy_check(const struct device *dev)
 {
-	if (atomic_test_bit(&dev->pm->atomic_flags,
-			    PM_DEVICE_ATOMIC_FLAGS_BUSY_BIT)) {
+	bool busy;
+
+	(void)k_mutex_lock(&dev->pm->lock, K_FOREVER);
+	busy = dev->pm->busy;
+	(void)k_mutex_unlock(&dev->pm->lock);
+
+	if (busy) {
 		return -EBUSY;
 	}
+
 	return 0;
 }
 
 void pm_device_busy_set(const struct device *dev)
 {
-	atomic_set_bit(&dev->pm->atomic_flags,
-		       PM_DEVICE_ATOMIC_FLAGS_BUSY_BIT);
+	(void)k_mutex_lock(&dev->pm->lock, K_FOREVER);
+	dev->pm->busy = true;
+	(void)k_mutex_unlock(&dev->pm->lock);
 }
 
 void pm_device_busy_clear(const struct device *dev)
 {
-	atomic_clear_bit(&dev->pm->atomic_flags,
-			 PM_DEVICE_ATOMIC_FLAGS_BUSY_BIT);
+	(void)k_mutex_lock(&dev->pm->lock, K_FOREVER);
+	dev->pm->busy = false;
+	(void)k_mutex_unlock(&dev->pm->lock);
 }
