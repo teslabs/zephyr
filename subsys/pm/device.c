@@ -155,14 +155,11 @@ int pm_device_any_busy_check(void)
 	const struct device *dev = __device_start;
 
 	while (dev < __device_end) {
-		bool busy;
+		int ret;
 
-		(void)k_mutex_lock(&dev->pm->lock, K_FOREVER);
-		busy = dev->pm->busy;
-		(void)k_mutex_unlock(&dev->pm->lock);
-
-		if (busy) {
-			return -EBUSY;
+		ret = pm_device_busy_check(dev);
+		if (ret < 0) {
+			return ret;
 		}
 
 		++dev;
