@@ -21,10 +21,16 @@ manifest:
   remotes:
     - name: upstream
       url-base: https://github.com/zephyrproject-rtos
+    - name: teslabs
+      url-base: https://github.com/teslabs
 
   #
   # Please add items below based on alphabetical order
   projects:
+    - name: canopen-stack
+      revision: f5769a367f8c7dbe8671798c4e262ceec8d990bc
+      path: modules/lib/canopen-stack
+      remote: teslabs
     - name: canopennode
       revision: f167efe85c8c7de886f1bc47f9173cfb8a346bb5
       path: modules/lib/canopennode
