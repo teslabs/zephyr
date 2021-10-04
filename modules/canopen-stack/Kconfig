@@ -1,0 +1,51 @@
+# Copyright (c) 2021 Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+config ZEPHYR_CANOPEN_STACK_MODULE
+	bool
+
+config CANOPEN_STACK
+	bool "canopen-stack support"
+	depends on CAN
+	help
+	  This option enables the canopen-stack library.
+
+if CANOPEN_STACK
+
+config CANOPEN_STACK_SDOS_N
+	int "Number of SDO servers"
+	default 1
+	help
+	  Number of SDO servers the library will support.
+
+config CANOPEN_STACK_EMCY_N
+	int "Number of emergency codes"
+	default 32
+	help
+	  Number of emergency codes the library will support.
+
+config CANOPEN_STACK_RPDO_N
+	int "Number of receive PDOs"
+	default 4
+	help
+	  Number of receive PDOs the library will support.
+
+config CANOPEN_STACK_TPDO_N
+	int "Number of transmit PDOs"
+	default 4
+	help
+	  Number of transmit PDOs the library will support.
+
+config CANOPEN_STACK_USE_LSS
+	bool "Enable LSS"
+	default y
+	help
+	  Enable support for LSS services.
+
+config CANOPEN_STACK_USE_PARAMS
+	bool "Enable parameters"
+	default y
+	help
+	  Enable support for parameters.
+
+endif # CANOPEN_STACK
