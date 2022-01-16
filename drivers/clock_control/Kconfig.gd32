@@ -1,0 +1,11 @@
+# Copyright (c) 2022 Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+DT_COMPAT_GD_GD32_RCU := gd,gd32-rcu
+
+config CLOCK_CONTROL_GD32
+	bool "GD32 clock control"
+	depends on SOC_FAMILY_GD32
+	default $(dt_compat_enabled,$(DT_COMPAT_GD_GD32_RCU))
+	help
+	  Enable driver for Gigadevice Reset Clock Unit (RCU).
