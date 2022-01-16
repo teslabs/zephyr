@@ -6,6 +6,8 @@
 
 #define DT_DRV_COMPAT gd_gd32_gpio
 
+#include <drivers/clock_control.h>
+#include <drivers/clock_control/gd32.h>
 #include <drivers/gpio.h>
 #include <drivers/interrupt_controller/gd32_exti.h>
 #include <soc.h>
@@ -41,7 +43,7 @@
 struct gpio_gd32_config {
 	struct gpio_driver_config common;
 	uint32_t reg;
-	uint32_t rcu_periph_clock;
+	uint16_t clock;
 };
 
 struct gpio_gd32_data {
@@ -341,16 +343,20 @@ static const struct gpio_driver_api gpio_gd32_api = {
 static int gpio_gd32_init(const struct device *port)
 {
 	const struct gpio_gd32_config *config = port->config;
+	uint16_t extiss_clk;
 
-	rcu_periph_clock_enable(config->rcu_periph_clock);
+	(void)clock_control_on(GD32_CLOCK_CONTROLLER,
+			       (clock_control_subsys_t *)&config->clock);
 
 #ifdef CONFIG_GD32_HAS_AF_PINMUX
-	/* enable access to SYSCFG_EXTISSn registers */
-	rcu_periph_clock_enable(DT_PROP(SYSCFG_NODE, rcu_periph_clock));
+	extiss_clk = DT_CLOCKS_CELL(SYSCFG_NODE, id);
 #else
-	/* enable access to AFIO_EXTISSn registers */
-	rcu_periph_clock_enable(DT_PROP(AFIO_NODE, rcu_periph_clock));
+	extiss_clk = DT_CLOCKS_CELL(AFIO_NODE, id);
 #endif /* CONFIG_GD32_HAS_AF_PINMUX */
+
+	/* enable access to SYSCFG_EXTISSn/AFIO_EXTISSn registers */
+	(void)clock_control_on(GD32_CLOCK_CONTROLLER,
+			       (clock_control_subsys_t *)&extiss_clk);
 
 	return 0;
 }
@@ -361,7 +367,7 @@ static int gpio_gd32_init(const struct device *port)
 			.port_pin_mask = GPIO_PORT_PIN_MASK_FROM_DT_INST(n),   \
 		},							       \
 		.reg = DT_INST_REG_ADDR(n),				       \
-		.rcu_periph_clock = DT_INST_PROP(n, rcu_periph_clock),	       \
+		.clock = DT_INST_CLOCKS_CELL(n, id),			       \
 	};								       \
 									       \
 	static struct gpio_gd32_data gpio_gd32_data##n;			       \
