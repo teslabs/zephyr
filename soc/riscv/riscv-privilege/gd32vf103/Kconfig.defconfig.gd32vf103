@@ -40,6 +40,9 @@ config FLASH_BASE_ADDRESS
 config 2ND_LEVEL_INTERRUPTS
 	default y
 
+config CLOCK_CONTROL
+	default y
+
 config PINCTRL
 	default y
 

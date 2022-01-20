@@ -1,0 +1,25 @@
+# Copyright (c) 2022, TOKITA Hiroshi
+# SPDX-License-Identifier: Apache-2.0
+
+description: |
+  GD32VF103 PLL1, PLL2
+
+  Outputs the frequency obtained by multiplying PREDV1
+  by the clock-mult value.
+
+compatible: "gd32,gd32vf103-plln-clock"
+
+include: fixed-factor-clock.yaml
+
+properties:
+    clock-mult:
+      enum:
+        - 8
+        - 9
+        - 10
+        - 11
+        - 12
+        - 13
+        - 14
+        - 16
+        - 20

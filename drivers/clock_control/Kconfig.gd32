@@ -5,7 +5,7 @@ DT_COMPAT_GD_GD32_RCU := gd,gd32-rcu
 
 config CLOCK_CONTROL_GD32
 	bool "GD32 clock control"
-	depends on SOC_FAMILY_GD32
+	depends on (SOC_FAMILY_GD32 || SOC_SERIES_GD32VF103)
 	default $(dt_compat_enabled,$(DT_COMPAT_GD_GD32_RCU))
 	help
 	  Enable driver for Gigadevice Reset Clock Unit (RCU).

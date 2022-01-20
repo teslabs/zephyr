@@ -8,15 +8,7 @@
 
 static int gigadevice_gd32v_soc_init(const struct device *dev)
 {
-	uint32_t key;
-
 	ARG_UNUSED(dev);
-
-	key = irq_lock();
-
-	SystemInit();
-
-	irq_unlock(key);
 
 	return 0;
 }

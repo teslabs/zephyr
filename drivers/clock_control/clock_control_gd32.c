@@ -7,8 +7,25 @@
 #include <devicetree.h>
 #include <drivers/clock_control.h>
 #include <drivers/clock_control/gd32.h>
+#ifdef CONFIG_SOC_GD32VF103
+#include <dt-bindings/clock/gd32_rcu_vf103.h>
+#else
 #include <dt-bindings/clock/gd32_rcu_f4xx.h>
+#endif
 #include <soc.h>
+
+/** Unify GD32 HAL Register name */
+#ifndef RCU_CKSYSSRC_PLLP
+#define RCU_CKSYSSRC_PLLP RCU_CKSYSSRC_PLL
+#endif
+
+#ifndef RCU_SCSS_PLLP
+#define RCU_SCSS_PLLP RCU_SCSS_PLL
+#endif
+
+#ifndef GD32_AHB1EN_OFFSET
+#define GD32_AHB1EN_OFFSET GD32_AHBEN_OFFSET
+#endif
 
 /** PMU DT node */
 #define GD32_PMU_NODE DT_NODELABEL(pmu)
@@ -19,10 +36,25 @@
 
 /** PLL DT node */
 #define GD32_PLL_NODE DT_NODELABEL(pll)
+/** PLL1 DT node */
+#define GD32_PLL1_NODE DT_NODELABEL(pll1)
+/** PLL2 DT node */
+#define GD32_PLL2_NODE DT_NODELABEL(pll2)
+/** PLL PRE-DIVIDER0 DT node */
+#define GD32_PREDV0_NODE DT_NODELABEL(predv0)
+/** PLL PRE-DIVIDER1 DT node */
+#define GD32_PREDV1_NODE DT_NODELABEL(predv1)
+/** IRC8M DT node */
+#define GD32_IRC8M_NODE DT_NODELABEL(irc8m)
+/** IRC8M DT node */
+#define GD32_IRC8M_DIV2_NODE DT_NODELABEL(irc8m_div2)
 /** IRC16M DT node */
 #define GD32_IRC16M_NODE DT_NODELABEL(irc16m)
 /** HXTAL DT node */
 #define GD32_HXTAL_NODE DT_NODELABEL(hxtal)
+
+/** check pll compatible type */
+#define GD32_PLL_IS_GD32F4XX_PLL DT_NODE_HAS_COMPAT(GD32_PLL_NODE, gd_gd32f4xx_pll_clock)
 
 /** CK_SYS clock DT node */
 #define GD32_CK_SYS_NODE \
@@ -30,6 +62,9 @@
 /** If CK_SYS clock source is PLL evaluates to 1, else 0 */
 #define GD32_CK_SYS_IS_PLL \
 	DT_SAME_NODE(GD32_CK_SYS_NODE, GD32_PLL_NODE)
+/** If CK_SYS clock source is IRC8M evaluates to 1, else 0 */
+#define GD32_CK_SYS_IS_IRC8M \
+	DT_SAME_NODE(GD32_CK_SYS_NODE, GD32_IRC8M_NODE)
 /** If CK_SYS clock source is IRC16M evaluates to 1, else 0 */
 #define GD32_CK_SYS_IS_IRC16M \
 	DT_SAME_NODE(GD32_CK_SYS_NODE, GD32_IRC16M_NODE)
@@ -46,6 +81,25 @@
 /** If CK_SYS clock source is IRC16M evaluates to 1, else 0 */
 #define GD32_CK_PLL_IS_IRC16M \
 	DT_SAME_NODE(GD32_CK_PLL_NODE, GD32_IRC16M_NODE)
+/** If CK_SYS clock source is IRC8M_DIV2 evaluates to 1, else 0 */
+#define GD32_CK_PLL_IS_IRC8M_DIV2 \
+	DT_SAME_NODE(GD32_CK_PLL_NODE, GD32_IRC8M_DIV2_NODE)
+
+/** predv0 divider DT node */
+#define GD32_CK_PREDV0_NODE \
+	DT_CLOCKS_CTLR(GD32_PREDV0_NODE)
+/** If predv0 clock source is HXTAL evaluates to 1, else 0 */
+#define GD32_CK_PREDV0_IS_HXTAL	\
+	DT_SAME_NODE(GD32_CK_PREDV0_NODE, GD32_HXTAL_NODE)
+/** If predv0 clock source is PLL1 evaluates to 1, else 0 */
+#define GD32_CK_PREDV0_IS_PLL1 \
+	DT_SAME_NODE(GD32_CK_PREDV0_NODE, GD32_PLL1_NODE)
+
+/** If PLL1 is enabled */
+#define GD32_PLL1_IS_ENABLED DT_NODE_HAS_STATUS(GD32_PLL1_NODE, okay)
+/** If PLL2 is enabled */
+#define GD32_PLL2_IS_ENABLED DT_NODE_HAS_STATUS(GD32_PLL2_NODE, okay)
+
 
 /** If PLL is enabled */
 #define GD32_PLL_IS_ENABLED DT_NODE_HAS_STATUS(GD32_PLL_NODE, okay)
@@ -63,6 +117,28 @@
 #define GD32_PLL_CFG \
 	(GD32_PLL_PRESCALER | (GD32_PLL_MUL_N << 6U) | \
 	 (((GD32_PLL_DIV_P >> 1U) - 1U) << 16U) | (GD32_PLL_DIV_Q << 24U))
+
+/** PLL multiplication factor property */
+#define GD32_PLLMF DT_PROP(GD32_PLL_NODE, clock_mult)
+/** calculate PLLMF[0:3] */
+#define GD32_PLLMF_0_3(mf) ((15 == mf) ? RCU_PLL_MUL6_5 \
+			     : ((mf < 17) ? CFG0_PLLMF(mf - 2) :CFG0_PLLMF(mf - 17)))
+/** calculate PLLMF[4] */
+#define GD32_PLLMF_4(mf) ((mf < 17) ? 0 : PLLMF_4)
+/** pll multiplication factor connfiguration */
+#define GD32_PLLMF_CFG (GD32_PLLMF_0_3(GD32_PLLMF) | (GD32_PLLMF_4(GD32_PLLMF)))
+
+/** calculate PLL1MF, PLL2MF value */
+#define GD32_PLLnMF_VALUE(mf) ((mf > 16) ? 15 : mf - 2)
+/** pll1 multiplication factor configuration */
+#define GD32_PLL1MF_CFG CFG1_PLL1MF(GD32_PLLnMF_VALUE(DT_PROP(GD32_PLL1_NODE, clock_mult)))
+/** pll2 multiplication factor configuration */
+#define GD32_PLL2MF_CFG CFG1_PLL2MF(GD32_PLLnMF_VALUE(DT_PROP(GD32_PLL2_NODE, clock_mult)))
+
+/** predv0 divider configuration */
+#define GD32_PREDV0_CFG CFG1_PREDV1(DT_PROP(GD32_PREDV0_NODE, clock_div) - 1)
+/** predv1 divider configuration */
+#define GD32_PREDV1_CFG CFG1_PREDV1(DT_PROP(GD32_PREDV1_NODE, clock_div) - 1)
 
 /** If HXTAL is enabled */
 #define GD32_HXTAL_IS_ENABLED DT_NODE_HAS_STATUS(GD32_HXTAL_NODE, okay)
@@ -88,6 +164,32 @@
 /** RCU register (from config field) */
 #define GD32_RCU_CFG_REG(cfg) REG32(RCU + GD32_RCU_CFG_OFFSET(cfg))
 
+/** IRC8M value */
+#define GD32_IRC8M_FREQUENCY DT_PROP(GD32_IRC8M_NODE, clock_frequency)
+
+/** fixed-factor-clock node multiplification and division */
+#define GD32_FREQ_FACTOR(fq, node) fq *DT_PROP(DT_NODELABEL(node), clock_mult) \
+	/ DT_PROP(DT_NODELABEL(node), clock_div)
+
+/** PLL source clock frequency */
+#define GD32_PLL_SRC_FREQENCY (GD32_CK_PLL_IS_IRC8M_DIV2 ? GD32_IRC8M_DIV2_FREQUENCY \
+		: GD32_PREDV0_FREQUENCY)
+/** predv0 source clock frequency */
+#define GD32_PREDV0_SRC_FREQENCY (GD32_CK_PREDV0_IS_HXTAL ? GD32_HXTAL_FREQUENCY : GD32_PLL1_FREQUENCY)
+
+/** irc8m/2 frequency */
+#define GD32_IRC8M_DIV2_FREQUENCY GD32_FREQ_FACTOR(GD32_IRC8M_FREQUENCY, irc8m_div2)
+/** pll frequency */
+#define GD32_PLL_FREQUENCY        GD32_FREQ_FACTOR(GD32_PLL_SRC_FREQENCY, pll)
+/** predv0 frequency */
+#define GD32_PREDV0_FREQUENCY     GD32_FREQ_FACTOR(GD32_PREDV0_SRC_FREQENCY, predv0)
+/** predv1 frequency */
+#define GD32_PREDV1_FREQUENCY     GD32_FREQ_FACTOR(GD32_HXTAL_FREQUENCY, predv1)
+/** pll1 frequency */
+#define GD32_PLL1_FREQUENCY       GD32_FREQ_FACTOR(GD32_PREDV1_FREQUENCY, pll1)
+/** pll2 frequency */
+#define GD32_PLL2_FREQUENCY       GD32_FREQ_FACTOR(GD32_PREDV1_FREQUENCY, pll2)
+
 /** AHB prescaler exponents */
 static const uint8_t ahb_exp[] = {0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U, 1U, 2U, 3U,
 				  4U, 6U, 7U, 8U, 9U};
@@ -100,15 +202,26 @@ static const uint8_t apb2_exp[] = {0U, 0U, 0U, 0U, 1U, 2U, 3U, 4U};
 static void gd32_reset_rcu_state(void)
 {
 	/* select internal 16MHz RC oscillator */
+#if GD32_IRC16M_NODE
 	RCU_CTL |= RCU_CTL_IRC16MEN;
 	RCU_CFG0 = 0U;
 	while ((RCU_CFG0 & RCU_CFG0_SCSS) != RCU_SCSS_IRC16M)
 		;
+#elif GD32_IRC8M_NODE
+	RCU_CTL |= RCU_CTL_IRC8MEN;
+	RCU_CFG0 = 0U;
+	while ((RCU_CFG0 & RCU_CFG0_SCSS) != RCU_SCSS_IRC8M)
+		;
+#endif
 
 	/* reset HXTAL and PLL settings */
 	RCU_CTL &= ~(RCU_CTL_PLLEN | RCU_CTL_HXTALEN | RCU_CTL_CKMEN |
 		     RCU_CTL_HXTALBPS);
+#if GD32_PLL_IS_GD32F4XX_PLL
 	RCU_PLL = GD32_PLL_CFG_INIT;
+#else
+	RCU_CFG1 = 0U;
+#endif
 
 	/* disable all interrupts */
 	RCU_INT = 0U;
@@ -129,10 +242,33 @@ static void gd32_configure_hxtal(void)
 }
 #endif /* GD32_HXTAL_IS_ENABLED */
 
+#if GD32_PLL1_IS_ENABLED
+static void gd32_configure_pll1(void)
+{
+	RCU_CFG1 |= (GD32_PREDV0_CFG | GD32_PLL1MF_CFG);
+
+	RCU_CTL |= RCU_CTL_PLL1EN;
+	while (0U == (RCU_CTL & RCU_CTL_PLL1STB)) {
+	}
+}
+#endif
+
+#if GD32_PLL2_IS_ENABLED
+static void gd32_configure_pll2(void)
+{
+	RCU_CFG1 |= (GD32_PREDV0_CFG | GD32_PLL2MF_CFG);
+
+	RCU_CTL |= RCU_CTL_PLL2EN;
+	while (0U == (RCU_CTL & RCU_CTL_PLL2STB)) {
+	}
+}
+#endif
+
 #if GD32_PLL_IS_ENABLED
 /** Configure and enable PLL */
 static void gd32_configure_pll(void)
 {
+#if GD32_PLL_IS_GD32F4XX_PLL
 	/* configure PSC, N, P, Q and clock source */
 	RCU_PLL = GD32_PLL_CFG;
 
@@ -141,6 +277,22 @@ static void gd32_configure_pll(void)
 	} else {
 		RCU_PLL |= RCU_PLLSRC_IRC16M;
 	}
+#else
+	RCU_CFG0 |= GD32_PLLMF_CFG;
+	RCU_CFG1 |= GD32_PREDV1_CFG;
+
+	if (GD32_CK_PREDV0_IS_HXTAL) {
+		RCU_CFG0 |= RCU_PREDV0SRC_HXTAL;
+	} else {
+		RCU_CFG0 |= RCU_PREDV0SRC_CKPLL1;
+	}
+
+	if (GD32_CK_PLL_IS_HXTAL) {
+		RCU_CFG0 |= RCU_PLLSRC_HXTAL;
+	} else {
+		RCU_CFG0 |= RCU_PLLSRC_IRC8M_DIV2;
+	}
+#endif
 
 	/* enable PLL and wait until stable */
 	RCU_CTL |= RCU_CTL_PLLEN;
@@ -173,6 +325,7 @@ static void gd32_configure_ck_sys_source()
 	while((RCU_CFG0 & RCU_SCSS_PLLP) == 0U)
 		;
 
+#if GD32_PLL_IS_GD32F4XX_PLL
 #if GD32_CK_PLL_IS_HXTAL
 	SystemCoreClock = GD32_HXTAL_FREQUENCY;
 #else
@@ -180,6 +333,9 @@ static void gd32_configure_ck_sys_source()
 #endif
 	SystemCoreClock = ((SystemCoreClock / GD32_PLL_PRESCALER) *
 			   GD32_PLL_MUL_N) / GD32_PLL_DIV_P;
+#else
+	SystemCoreClock = GD32_PLL_FREQUENCY;
+#endif
 #elif GD32_CK_SYS_IS_HXTAL
 	RCU_CFG0 |= RCU_CKSYSSRC_HXTAL;
 	while((RCU_CFG0 & RCU_SCSS_HXTAL) == 0U)
@@ -188,6 +344,8 @@ static void gd32_configure_ck_sys_source()
 	SystemCoreClock = GD32_HXTAL_FREQUENCY;
 #elif GD32_CK_SYS_IS_IRC16M
 	SystemCoreClock = 16000000UL;
+#elif GD32_CK_SYS_IS_IRC8M
+	SystemCoreClock = 8000000UL;
 #endif
 
 	SystemCoreClock >>= ahb_exp[GD32_AHB_PRESCALER];
@@ -221,14 +379,20 @@ static int gd32_clock_control_get_rate(const struct device *dev,
 
 	switch (GD32_RCU_CFG_OFFSET(cfg)) {
 	case GD32_AHB1EN_OFFSET:
+#ifdef GD32_AHB2EN_OFFSET
 		__fallthrough;
 	case GD32_AHB2EN_OFFSET:
+#endif
+#ifdef GD32_AHB3EN_OFFSET
 		__fallthrough;
 	case GD32_AHB3EN_OFFSET:
+#endif
 		*rate = SystemCoreClock;
 	case GD32_APB1EN_OFFSET:
+#if GD32_ADDAPB1EN_OFFSET
 		__fallthrough;
 	case GD32_ADDAPB1EN_OFFSET:
+#endif
 		*rate = SystemCoreClock >> apb1_exp[GD32_APB1_PRESCALER];
 		break;
 	case GD32_APB2EN_OFFSET:
@@ -279,6 +443,14 @@ static int gd32_clock_control_init(const struct device *dev)
 	RCU_CFG0 |= CFG0_AHBPSC(GD32_AHB_PRESCALER != 0 ? GD32_AHB_PRESCALER + 7U : 0) |
 		    CFG0_APB1PSC(GD32_APB1_PRESCALER != 0 ? GD32_APB1_PRESCALER + 3U : 0) |
 		    CFG0_APB2PSC(GD32_APB2_PRESCALER != 0 ? GD32_APB2_PRESCALER + 3U : 0);
+
+#if GD32_PLL1_IS_ENABLED
+	gd32_configure_pll1();
+#endif
+
+#if GD32_PLL2_IS_ENABLED
+	gd32_configure_pll2();
+#endif
 
 #if GD32_PLL_IS_ENABLED
 	gd32_configure_pll();

@@ -1,0 +1,45 @@
+# Copyright (c) 2022, TOKITA Hiroshi
+# SPDX-License-Identifier: Apache-2.0
+
+description: |
+  GD32VF103 PLL.
+
+  The PLL input can use IRC8M/2 or PREDV0 output.
+  Output frequency is input clock frequency multiplied clock-mult value.
+
+  The PLL output frequency must not exceed 108MHz.
+
+compatible: "gd32,gd32vf103-pll-clock"
+
+include: fixed-factor-clock.yaml
+
+properties:
+    clock-mult:
+      description:
+        Main PLL multiplication factor.
+        ** Note ** For x6.5 multiplier value, please use "mul = <15>;"
+      enum:
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 15 # treat as x6.5
+        - 16
+        - 17
+        - 18
+        - 19
+        - 20
+        - 21
+        - 22
+        - 23
+        - 24
+        - 25
+        - 26
+        - 27
+        - 28
+        - 29
+        - 30
+        - 31
+        - 32

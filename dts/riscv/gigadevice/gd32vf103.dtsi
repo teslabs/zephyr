@@ -10,6 +10,10 @@
 
 #include <dt-bindings/pwm/pwm.h>
 
+#include <dt-bindings/clock/gd32_rcu_vf103.h>
+
+#include <freq.h>
+
 / {
 	#address-cells = <1>;
 	#size-cells = <1>;
@@ -24,6 +28,74 @@
 			compatible = "nuclei,bumblebee", "riscv";
 			device_type = "cpu";
 			reg = <0>;
+		};
+	};
+
+	clocks {
+		hxtal: hxtal {
+			#clock-cells = <0>;
+			compatible = "gd,gd32-hxtal-clock";
+			status = "disabled";
+		};
+
+		irc8m: irc8m {
+			#clock-cells = <0>;
+			compatible = "fixed-clock";
+			clock-frequency = <DT_FREQ_M(8)>;
+			status = "disabled";
+		};
+
+		pll: pll {
+			#clock-cells = <0>;
+			compatible = "gd32,gd32vf103-pll-clock";
+			clock-div = <1>;
+			clock-mult = <1>;
+			status = "disabled";
+		};
+
+		pll1: pll1 {
+			#clock-cells = <0>;
+			compatible = "gd32,gd32vf103-plln-clock";
+			clocks = <&predv1>;
+			clock-div = <1>;
+			clock-mult = <1>;
+			status = "disabled";
+		};
+
+		pll2: pll2 {
+			#clock-cells = <0>;
+			compatible = "gd32,gd32vf103-plln-clock";
+			clocks = <&predv1>;
+			clock-div = <1>;
+			clock-mult = <1>;
+			status = "disabled";
+		};
+
+		predv0: predv0 {
+			#clock-cells = <0>;
+			compatible = "gd32,gd32vf103-predv";
+			clocks = <&hxtal>;
+			clock-div = <1>;
+			clock-mult = <1>;
+			status = "okay";
+		};
+
+		predv1: predv1 {
+			#clock-cells = <0>;
+			compatible = "gd32,gd32vf103-predv";
+			clocks = <&hxtal>;
+			clock-div = <1>;
+			clock-mult = <1>;
+			status = "okay";
+		};
+
+		irc8m_div2: irc8m_div2 {
+			#clock-cells = <0>;
+			compatible = "fixed-factor-clock";
+			clocks = <&irc8m>;
+			clock-div = <2>;
+			clock-mult = <1>;
+			status = "okay";
 		};
 	};
 
@@ -67,6 +139,20 @@
 				label = "FLASH0";
 				write-block-size = <2>;
 			};
+		};
+
+		rcu: reset-clock-unit@40021000 {
+			compatible = "gd,gd32-rcu";
+			reg = <0x40021000 0x400>;
+			#clock-cells = <1>;
+			status = "okay";
+		};
+
+		pmu: power-management-unit@40007000 {
+			compatible = "gd,gd32-pmu";
+			reg = <0x40007000 0x400>;
+			clocks = <&rcu GD32_RCU_PMU>;
+			status = "okay";
 		};
 
 		usart0: serial@40013800 {
@@ -159,7 +245,7 @@
 				reg = <0x40010800 0x400>;
 				gpio-controller;
 				#gpio-cells = <2>;
-				rcu-periph-clock = <0x602>;
+				clocks = <&rcu GD32_RCU_GPIOA>;
 				status = "disabled";
 				label = "GPIOA";
 			};
@@ -169,7 +255,7 @@
 				reg = <0x40010c00 0x400>;
 				gpio-controller;
 				#gpio-cells = <2>;
-				rcu-periph-clock = <0x603>;
+				clocks = <&rcu GD32_RCU_GPIOB>;
 				status = "disabled";
 				label = "GPIOB";
 			};
@@ -179,7 +265,7 @@
 				reg = <0x40011000 0x400>;
 				gpio-controller;
 				#gpio-cells = <2>;
-				rcu-periph-clock = <0x604>;
+				clocks = <&rcu GD32_RCU_GPIOC>;
 				status = "disabled";
 				label = "GPIOC";
 			};
@@ -189,7 +275,7 @@
 				reg = <0x40011400 0x400>;
 				gpio-controller;
 				#gpio-cells = <2>;
-				rcu-periph-clock = <0x605>;
+				clocks = <&rcu GD32_RCU_GPIOD>;
 				status = "disabled";
 				label = "GPIOD";
 			};
@@ -199,7 +285,7 @@
 				reg = <0x40011800 0x400>;
 				gpio-controller;
 				#gpio-cells = <2>;
-				rcu-periph-clock = <0x606>;
+				clocks = <&rcu GD32_RCU_GPIOE>;
 				status = "disabled";
 				label = "GPIOE";
 			};
