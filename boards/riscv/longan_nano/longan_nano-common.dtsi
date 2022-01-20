@@ -96,3 +96,44 @@
 	pinctrl-0 = <&dac_default>;
 	pinctrl-names = "default";
 };
+
+&hxtal {
+	clock-frequency = <DT_FREQ_M(8)>;
+	status = "okay";
+};
+
+&irc8m {
+	status = "okay";
+};
+
+&pll {
+	clocks = <&hxtal>;
+	clock-mult = <27>;
+	status = "okay";
+};
+
+&pll1 {
+	clock-mult = <20>;
+	status = "okay";
+};
+
+&pll2 {
+	clock-mult = <20>;
+	status = "okay";
+};
+
+&predv0 {
+	clocks = <&hxtal>;
+	clock-div = <2>;
+};
+
+&predv1 {
+	clock-div = <2>;
+};
+
+&rcu {
+	clocks = <&pll>;
+	ahb-prescaler = <1>;
+	apb1-prescaler = <2>;
+	apb2-prescaler = <1>;
+};
