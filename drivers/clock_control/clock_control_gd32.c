@@ -149,7 +149,7 @@ static void gd32_configure_pll(void)
 }
 #endif /* GD32_PLL_IS_ENABLED */
 
-#ifdef GD32_PMU_ENABLE_HIGH_DRIVER
+#if GD32_PMU_ENABLE_HIGH_DRIVER
 /** Configure high-driver mode */
 static void gd32_enable_high_drive()
 {
@@ -284,7 +284,7 @@ static int gd32_clock_control_init(const struct device *dev)
 	gd32_configure_pll();
 #endif
 
-#ifdef GD32_PMU_ENABLE_HIGH_DRIVER
+#if GD32_PMU_ENABLE_HIGH_DRIVER
 	gd32_enable_high_drive();
 #endif
 
