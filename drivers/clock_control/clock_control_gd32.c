@@ -276,9 +276,9 @@ static int gd32_clock_control_init(const struct device *dev)
 #endif
 
 	/* configure bus clock prescalers */
-	RCU_CFG0 |= CFG0_AHBPSC(GD32_AHB_PRESCALER + 7U) |
-		    CFG0_APB1PSC(GD32_APB1_PRESCALER + 3U) |
-		    CFG0_APB2PSC(GD32_APB2_PRESCALER + 3U);
+	RCU_CFG0 |= CFG0_AHBPSC(GD32_AHB_PRESCALER != 0 ? GD32_AHB_PRESCALER + 7U : 0) |
+		    CFG0_APB1PSC(GD32_APB1_PRESCALER != 0 ? GD32_APB1_PRESCALER + 3U : 0) |
+		    CFG0_APB2PSC(GD32_APB2_PRESCALER != 0 ? GD32_APB2_PRESCALER + 3U : 0);
 
 #if GD32_PLL_IS_ENABLED
 	gd32_configure_pll();
