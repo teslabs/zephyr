@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/* TEST */
 #include <toolchain.h>
 
 __weak void *__dso_handle;
