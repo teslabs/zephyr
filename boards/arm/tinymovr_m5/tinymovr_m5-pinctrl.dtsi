@@ -1,0 +1,19 @@
+/*
+ * Copyright (c) 2023, Teslabs Engineering S.L.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/dt-bindings/pinctrl/pac55xx-pinctrl.h>
+
+&pinctrl {
+	usartb_default: usartb_default {
+		group1 {
+			pinmux = <USBMOSI_PF2>;
+			drive-push-pull;
+		};
+		group2 {
+			pinmux = <USBMISO_PF3>;
+			bias-pull-up;
+		};
+	};
+};

@@ -1,0 +1,28 @@
+/*
+ * Copyright (c) 2023, Teslabs Engineering S.L.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+
+#include <qorvo/pac55xx/pac55xx.dtsi>
+#include "tinymovr_m5-pinctrl.dtsi"
+
+/ {
+	model = "Tinymovr M5";
+	compatible = "tinymovr,m5";
+
+	chosen {
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,console = &usartb;
+	};
+};
+
+&usartb {
+	compatible = "qorvo,pac55xx-usart";
+	status = "okay";
+	pinctrl-0 = <&usartb_default>;
+	pinctrl-names = "default";
+	current-speed = <9600>;
+};

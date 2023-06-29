@@ -1,0 +1,6 @@
+# Copyright (c) 2023, Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_TINYMOVR_M5
+	bool "Tinymovr M5"
+	depends on SOC_PAC5527

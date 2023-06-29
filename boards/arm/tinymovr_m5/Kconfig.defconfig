@@ -1,0 +1,5 @@
+# Copyright (c) 2023 Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD
+	default "tinymovr_m5" if BOARD_TINYMOVR_M5

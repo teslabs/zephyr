@@ -1,0 +1,11 @@
+# Copyright (c) 2023, Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+identifier: tinymovr_m5
+name: Tinymovr M5
+type: mcu
+arch: arm
+ram: 32
+flash: 128
+toolchain:
+  - zephyr
