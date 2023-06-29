@@ -1,0 +1,11 @@
+# Copyright (c) 2023, Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+choice
+	prompt "Qorvo PAC55XX MCU Selection"
+	depends on SOC_SERIES_PAC55XX
+
+	config SOC_PAC5527
+		bool "PAC5527"
+
+endchoice

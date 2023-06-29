@@ -1,0 +1,7 @@
+# Copyright (c) 2023 Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+config SOC_FAMILY
+	default "qorvo_pac" if SOC_FAMILY_QORVO_PAC
+
+source "soc/arm/qorvo_pac/*/Kconfig.defconfig"

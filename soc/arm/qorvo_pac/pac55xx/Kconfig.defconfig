@@ -1,0 +1,21 @@
+# Copyright (c) 2023, Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+if SOC_SERIES_PAC55XX
+
+config SOC
+	default "pac5527" if SOC_PAC5527
+
+config SOC_SERIES
+	default "pac55xx"
+
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	default $(dt_node_int_prop_int,/cpus/cpu@0,clock-frequency)
+
+config NUM_IRQS
+	default 32
+
+config BUILD_OUTPUT_HEX
+	default y
+
+endif # SOC_SERIES_PAC55XX
