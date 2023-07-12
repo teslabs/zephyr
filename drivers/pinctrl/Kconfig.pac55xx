@@ -1,0 +1,9 @@
+# Copyright (c) 2023 Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+config PINCTRL_PAC55XX
+	bool "Qorvo PAC55XX pin controller driver"
+	default y
+	depends on DT_HAS_QORVO_PAC55XX_PINCTRL_ENABLED
+	help
+	  Qorvo PAC55XX pin controller driver.
