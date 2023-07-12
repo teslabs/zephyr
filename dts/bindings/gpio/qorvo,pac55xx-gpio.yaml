@@ -1,0 +1,19 @@
+# Copyright (c) 2023 Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+description: Qorvo PAC55XX GPIO
+
+compatible: "qorvo,pac55xx-gpio"
+
+include: [gpio-controller.yaml, base.yaml]
+
+properties:
+  reg:
+    required: true
+
+  "#gpio-cells":
+    const: 2
+
+gpio-cells:
+  - pin
+  - flags
