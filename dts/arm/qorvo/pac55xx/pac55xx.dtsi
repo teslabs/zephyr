@@ -38,6 +38,11 @@
 			reg = <0x00000000 DT_SIZE_K(128)>;
 		};
 
+		scc: syscon@400d0400 {
+			compatible = "qorvo,pac55xx-scc", "simple-mfd", "syscon";
+			reg = <0x400d0400 0x400>;
+		};
+
 		gpioa: gpio-controller@400d1400 {
 			compatible = "qorvo,pac55xx-gpio";
 			reg = <0x400d1400 0x400>;
