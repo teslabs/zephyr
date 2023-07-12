@@ -37,6 +37,62 @@
 			compatible = "soc-nv-flash";
 			reg = <0x00000000 DT_SIZE_K(128)>;
 		};
+
+		gpioa: gpio-controller@400d1400 {
+			compatible = "qorvo,pac55xx-gpio";
+			reg = <0x400d1400 0x400>;
+			status = "disabled";
+			gpio-controller;
+			#gpio-cells = <2>;
+		};
+
+		gpiob: gpio-controller@400d1800 {
+			compatible = "qorvo,pac55xx-gpio";
+			reg = <0x400d1800 0x400>;
+			status = "disabled";
+			gpio-controller;
+			#gpio-cells = <2>;
+		};
+
+		gpioc: gpio-controller@400d1c00 {
+			compatible = "qorvo,pac55xx-gpio";
+			reg = <0x400d1c00 0x400>;
+			status = "disabled";
+			gpio-controller;
+			#gpio-cells = <2>;
+		};
+
+		gpiod: gpio-controller@400d2000 {
+			compatible = "qorvo,pac55xx-gpio";
+			reg = <0x400d2000 0x400>;
+			status = "disabled";
+			gpio-controller;
+			#gpio-cells = <2>;
+		};
+
+		gpioe: gpio-controller@400d2400 {
+			compatible = "qorvo,pac55xx-gpio";
+			reg = <0x400d2400 0x400>;
+			status = "disabled";
+			gpio-controller;
+			#gpio-cells = <2>;
+		};
+
+		gpiof: gpio-controller@400d2800 {
+			compatible = "qorvo,pac55xx-gpio";
+			reg = <0x400d2800 0x400>;
+			status = "disabled";
+			gpio-controller;
+			#gpio-cells = <2>;
+		};
+
+		gpiog: gpio-controller@400d2c00 {
+			compatible = "qorvo,pac55xx-gpio";
+			reg = <0x400d2c00 0x400>;
+			status = "disabled";
+			gpio-controller;
+			#gpio-cells = <2>;
+		};
 	};
 };
 
