@@ -41,6 +41,10 @@
 		scc: syscon@400d0400 {
 			compatible = "qorvo,pac55xx-scc", "simple-mfd", "syscon";
 			reg = <0x400d0400 0x400>;
+
+			pinctrl: pin-controller {
+				compatible = "qorvo,pac55xx-pinctrl";
+			};
 		};
 
 		gpioa: gpio-controller@400d1400 {
