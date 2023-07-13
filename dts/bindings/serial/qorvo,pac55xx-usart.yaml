@@ -1,0 +1,26 @@
+# Copyright (c) 2023 Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+description: Qorvo PAC55XX USART
+
+compatible: "qorvo,pac55xx-usart"
+
+include: [uart-controller.yaml, pinctrl-device.yaml]
+
+properties:
+  reg:
+    required: true
+
+  interrupts:
+    required: true
+
+  pinctrl-0:
+    required: true
+
+  pinctrl-names:
+    required: true
+
+  qorvo,mode-flag:
+    type: int
+    required: true
+    description: Mode flag in the CCS configuration register
