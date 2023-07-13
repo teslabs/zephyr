@@ -131,6 +131,35 @@ struct uart_config {
 };
 
 /**
+ * @brief Initialize uart_config from a Devicetree node.
+ *
+ * The following Devicetree properties are used for initialization:
+ *
+ * - current-speed: Baudrate
+ * - parity: Parity (defaults to UART_CFG_PARITY_NONE)
+ * - stop-bits: Stop bits (defaults to UART_CFG_STOP_BITS_1)
+ * - data-bits: Data bits (defaults to UART_CFG_DATA_BITS_8)
+ * - hw-flow-control: RTS/CTS hardware flow control (defaults to UART_CFG_FLOW_CTRL_NONE)
+ *
+ * @param node_id Node identifier
+ */
+#define UART_CONFIG_DT_INIT(node_id)                                                              \
+	{                                                                                         \
+		.baudrate = DT_PROP(node_id, current_speed),                                      \
+		.parity = DT_INST_ENUM_IDX_OR(node_id, parity, UART_CFG_PARITY_NONE),             \
+		.stop_bits = DT_INST_ENUM_IDX_OR(node_id, stop_bits, UART_CFG_STOP_BITS_1),       \
+		.data_bits = DT_INST_ENUM_IDX_OR(node_id, data_bits, UART_CFG_DATA_BITS_8),       \
+		.flow_ctrl = UART_CFG_FLOW_CTRL_RTS_CTS * DT_PROP(node_id, hw_flow_control),      \
+	}
+
+/**
+ * @brief Initialize uart_config from a Devicetree instance.
+ *
+ * @see UART_CONFIG_DT_INIT()
+ */
+#define UART_CONFIG_DT_INST_INIT(inst) UART_CONFIG_DT_INIT(DT_DRV_INST(inst))
+
+/**
  * @defgroup uart_interrupt Interrupt-driven UART API
  * @{
  */
