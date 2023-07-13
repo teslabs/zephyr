@@ -1,0 +1,11 @@
+# Copyright (c) 2023 Teslabs Engineering S.L.
+# SPDX-License-Identifier: Apache-2.0
+
+config UART_PAC55XX
+	bool "Qorvo PAC55XX UART driver"
+	default y
+	depends on DT_HAS_QORVO_PAC55XX_USART_ENABLED
+	select PINCTRL
+	select SERIAL_HAS_DRIVER
+	help
+	  This option enables the USART driver for Qorvo PAC55XX SoC family.
