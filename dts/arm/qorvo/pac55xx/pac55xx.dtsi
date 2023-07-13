@@ -38,6 +38,38 @@
 			reg = <0x00000000 DT_SIZE_K(128)>;
 		};
 
+		usarta: serial@40020000 {
+			/* for UART mode: compatible = "qorvo,pac55xx-usart" */
+			reg = <0x40020000 0x1000>;
+			interrupts = <23 0>;
+			status = "disabled";
+			qorvo,mode-flag = <28>;
+		};
+
+		usartb: serial@40030000 {
+			/* for UART mode: compatible = "qorvo,pac55xx-usart" */
+			reg = <0x40030000 0x1000>;
+			interrupts = <24 0>;
+			status = "disabled";
+			qorvo,mode-flag = <29>;
+		};
+
+		usartc: serial@40040000 {
+			/* for UART mode: compatible = "qorvo,pac55xx-usart" */
+			reg = <0x40040000 0x1000>;
+			interrupts = <25 0>;
+			status = "disabled";
+			qorvo,mode-flag = <30>;
+		};
+
+		usartd: serial@40050000 {
+			/* for UART mode: compatible = "qorvo,pac55xx-usart" */
+			reg = <0x40050000 0x1000>;
+			interrupts = <26 0>;
+			status = "disabled";
+			qorvo,mode-flag = <31>;
+		};
+
 		scc: syscon@400d0400 {
 			compatible = "qorvo,pac55xx-scc", "simple-mfd", "syscon";
 			reg = <0x400d0400 0x400>;
