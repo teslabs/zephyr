@@ -443,6 +443,18 @@
 				reg = <0x8d4000 0x1000>;
 				status = "disabled";
 				cpu = <14>;
+				#address-cells = <1>;
+				#size-cells = <1>;
+				ranges = <0x0 0x8d4000 0x4000>;
+
+				cpuflpr_clic: interrupt-controller@1000 {
+					compatible = "nordic,nrf-clic";
+					reg = <0x1000 0x3000>;
+					status = "disabled";
+					#interrupt-cells = <2>;
+					interrupt-controller;
+					#address-cells = <1>;
+				};
 			};
 
 			can120: can@8d8000 {
