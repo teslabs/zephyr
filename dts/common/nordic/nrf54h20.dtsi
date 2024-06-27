@@ -488,6 +488,15 @@
 				#size-cells = <1>;
 				ranges = <0x0 0x8d4000 0x4000>;
 
+				cpuflpr_vevif_tx: mailbox@0 {
+					compatible = "nordic,nrf-vevif-task-tx";
+					reg = <0x0 0x1000>;
+					status = "disabled";
+					#mbox-cells = <1>;
+					nordic,tasks = <32>;
+					nordic,tasks-mask = <0xffff0000>;
+				};
+
 				cpuflpr_clic: interrupt-controller@1000 {
 					compatible = "nordic,nrf-clic";
 					reg = <0x1000 0x3000>;
