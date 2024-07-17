@@ -9,6 +9,15 @@ compatible: "snps,dw-i3c-master-1.00a"
 include: i3c-controller.yaml
 
 properties:
+  reg:
+    required: true
+
+  reg-names:
+    required: true
+
+  interrupts:
+    required: true
+
   input-clock-frequency:
     required: true
     type: int
