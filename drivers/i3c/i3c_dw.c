@@ -2331,5 +2331,5 @@ static const struct i3c_driver_api dw_i3c_api = {
 	DEVICE_DT_INST_DEFINE(n, dw_i3c_init, NULL, &dw_i3c_data_##n, &dw_i3c_cfg_##n,             \
 			      POST_KERNEL, CONFIG_I3C_CONTROLLER_INIT_PRIORITY, &dw_i3c_api);
 
-#define DT_DRV_COMPAT snps_designware_i3c
+#define DT_DRV_COMPAT snps_dw_i3c_master_1_00a
 DT_INST_FOREACH_STATUS_OKAY(DEFINE_DEVICE_FN);

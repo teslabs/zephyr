@@ -2,10 +2,9 @@
 # Copyright (C) 2023 Meta Platforms
 # SPDX-License-Identifier: Apache-2.0
 
-description: >
-    This is a binding for the Synopsys I3C interface
+description: Synopsys DesignWare I3C master block
 
-compatible: "snps,designware-i3c"
+compatible: "snps,dw-i3c-master-1.00a"
 
 include: i3c-controller.yaml
 
