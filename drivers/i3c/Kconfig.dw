@@ -9,7 +9,7 @@ source "subsys/logging/Kconfig.template.log_config"
 config I3C_DW
 	bool "DW I3C support"
 	select I3C_IBI_WORKQUEUE if I3C_USE_IBI
-	depends on DT_HAS_SNPS_DESIGNWARE_I3C_ENABLED
+	depends on DT_HAS_SNPS_DW_I3C_MASTER_1_00A_ENABLED
 	default y
 	help
 	  Enable the Synopsys Designware I3C driver
