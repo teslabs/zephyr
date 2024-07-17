@@ -486,6 +486,19 @@
 				global-domain-id = <12>;
 			};
 
+			i3c120: i3c-master@8d3000 {
+				compatible = "nordic,nrf-i3c", "snps,dw-i3c-master-1.00a";
+				reg = <0x8d3000 0x1000>, <0x2fbe0000 0x300>;
+				reg-names = "wrapper", "core";
+				interrupts = <211 NRF_DEFAULT_IRQ_PRIORITY>;
+				#address-cells = <3>;
+				#size-cells = <0>;
+				input-clock-frequency = <DT_FREQ_M(160)>;
+				status = "disabled";
+				nordic,clockpin-enable = <NRF_FUN_I3C_SDA>,
+							 <NRF_FUN_I3C_SCL>;
+			};
+
 			cpuflpr_vpr: vpr@8d4000 {
 				compatible = "nordic,nrf-vpr-coprocessor";
 				reg = <0x8d4000 0x1000>;
@@ -512,6 +525,19 @@
 				clocks = <&canpll>;
 				bosch,mram-cfg = <0x0 28 8 3 3 0 1 1>;
 				status = "disabled";
+			};
+
+			i3c121: i3c-master@8de000 {
+				compatible = "nordic,nrf-i3c", "snps,dw-i3c-master-1.00a";
+				reg = <0x8de000 0x1000>, <0x2fbe1000 0x300>;
+				reg-names = "wrapper", "core";
+				interrupts = <222 NRF_DEFAULT_IRQ_PRIORITY>;
+				#address-cells = <3>;
+				#size-cells = <0>;
+				input-clock-frequency = <DT_FREQ_M(160)>;
+				status = "disabled";
+				nordic,clockpin-enable = <NRF_FUN_I3C_SDA>,
+							 <NRF_FUN_I3C_SCL>;
 			};
 
 			dppic120: dppic@8e1000 {
