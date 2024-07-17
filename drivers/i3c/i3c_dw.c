@@ -7,6 +7,7 @@
 
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/i3c.h>
+#include <zephyr/drivers/pinctrl.h>
 #include <zephyr/sys/util.h>
 #include <assert.h>
 
@@ -339,7 +340,12 @@ struct dw_i3c_config {
 	struct i3c_driver_config common;
 	uint32_t core_clk;
 	uint32_t regs;
-
+#ifdef CONFIG_I3C_DW_WRAPPER
+	uint32_t wrapper;
+#endif
+#ifdef CONFIG_PINCTRL
+	const struct pinctrl_dev_config *pcfg;
+#endif
 	/* Initial clk configuration */
 	/* Maximum OD high clk pulse length */
 	uint32_t od_thigh_max_ns;
@@ -380,6 +386,35 @@ struct dw_i3c_data {
 
 	struct dw_i3c_i2c_dev_data dw_i3c_i2c_priv_data[DW_I3C_MAX_DEVS];
 };
+
+#ifdef CONFIG_I3C_DW_WRAPPER
+#include <nrfx.h>
+
+/* nRF I3C wrapper offsets */
+#define I3C_EVENTS_CORE offsetof(NRF_I3C_Type, EVENTS_CORE)
+#define I3C_INTENSET    offsetof(NRF_I3C_Type, INTENSET)
+#define I3C_ENABLE      offsetof(NRF_I3C_Type, ENABLE)
+
+static void i3c_dw_wrapper_irq(const struct device *dev)
+{
+	const struct dw_i3c_config *config = dev->config;
+
+	if (sys_read32(config->wrapper + I3C_EVENTS_CORE) == 1U) {
+		sys_write32(0U, config->wrapper + I3C_EVENTS_CORE);
+	}
+}
+
+static int i3c_dw_wrapper_init(const struct device *dev)
+{
+	const struct dw_i3c_config *config = dev->config;
+
+	sys_write32(0U, config->wrapper + I3C_EVENTS_CORE);
+	sys_write32(I3C_INTENSET_CORE_Msk, config->wrapper + I3C_INTENSET);
+	sys_write32(1U, config->wrapper + I3C_ENABLE);
+
+	return 0;
+}
+#endif /* CONFIG_I3C_DW_WRAPPER */
 
 static uint8_t get_free_pos(uint32_t free_pos)
 {
@@ -1352,6 +1387,10 @@ static int i3c_dw_irq(const struct device *dev)
 #endif /* CONFIG_I3C_USE_IBI */
 	}
 
+#ifdef CONFIG_I3C_DW_WRAPPER
+	i3c_dw_wrapper_irq(dev);
+#endif /* CONFIG_I3C_DW_WRAPPER */
+
 	return 0;
 }
 
@@ -2187,6 +2226,17 @@ static int dw_i3c_init(const struct device *dev)
 	uint32_t ver_id;
 	uint32_t ver_type;
 
+#ifdef CONFIG_I3C_DW_WRAPPER
+	i3c_dw_wrapper_init(dev);
+#endif
+
+#ifdef CONFIG_PINCTRL
+	ret = pinctrl_apply_state(config->pcfg, PINCTRL_STATE_DEFAULT);
+	if (ret < 0) {
+		return ret;
+	}
+#endif
+
 #ifdef CONFIG_I3C_USE_IBI
 	k_sem_init(&data->ibi_sts_sem, 0, 1);
 #endif
@@ -2325,6 +2375,8 @@ static const struct i3c_driver_api dw_i3c_api = {
 	}
 
 #define DEFINE_DEVICE_FN(n)                                                                        \
+	PINCTRL_DT_INST_DEFINE(n);                                                                 \
+	                                                                                           \
 	I3C_DW_IRQ_HANDLER(n)                                                                      \
 	static struct i3c_device_desc dw_i3c_device_array_##n[] = I3C_DEVICE_ARRAY_DT_INST(n);     \
 	static struct i3c_i2c_device_desc dw_i3c_i2c_device_array_##n[] =                          \
@@ -2335,7 +2387,11 @@ static const struct i3c_driver_api dw_i3c_api = {
 		.common.ctrl_config.scl.i2c = DT_INST_PROP_OR(n, i2c_scl_hz, 0),                   \
 	};                                                                                         \
 	static const struct dw_i3c_config dw_i3c_cfg_##n = {                                       \
-		.regs = DT_INST_REG_ADDR(n),                                                       \
+		.regs = DT_INST_REG_ADDR_BY_NAME(n, core),                                         \
+		IF_ENABLED(CONFIG_I3C_DW_WRAPPER,                                                  \
+			   (.wrapper = DT_INST_REG_ADDR_BY_NAME(n, wrapper),))                     \
+		IF_ENABLED(CONFIG_PINCTRL,                                                         \
+			   (.pcfg = PINCTRL_DT_INST_DEV_CONFIG_GET(n),))                           \
 		.core_clk = DT_INST_PROP(n, input_clock_frequency),                                \
 		.od_thigh_max_ns = DT_INST_PROP(n, od_thigh_max_ns),                               \
 		.od_tlow_min_ns = DT_INST_PROP(n, od_tlow_min_ns),                                 \

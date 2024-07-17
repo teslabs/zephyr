@@ -1,0 +1,11 @@
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+config I3C_NRF
+	bool "Nordic nRF I3C support"
+	depends on DT_HAS_NORDIC_NRF_I3C_ENABLED
+	select I3C_DW_WRAPPER
+	select PINCTRL
+	default y
+	help
+	  Enable the Nordic nRF I3C driver

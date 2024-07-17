@@ -9,3 +9,10 @@ config I3C_DW
 	default y
 	help
 	  Enable the Synopsys Designware I3C driver
+
+config I3C_DW_WRAPPER
+	bool
+	depends on I3C_DW
+	help
+	  Select this option if Synopsys Designware I3C controller is wrapped
+	  in a vendor-specific IP block.
