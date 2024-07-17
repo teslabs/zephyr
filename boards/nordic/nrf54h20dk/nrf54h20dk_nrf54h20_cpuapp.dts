@@ -316,3 +316,9 @@ zephyr_udc0: &usbhs {
 	memory-regions = <&cpuapp_dma_region>;
 	status = "okay";
 };
+
+&i3c120 {
+	status = "okay";
+	pinctrl-0 = <&i3c120_default>;
+	pinctrl-names = "default";
+};
