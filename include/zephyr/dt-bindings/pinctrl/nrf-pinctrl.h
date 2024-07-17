@@ -156,6 +156,10 @@
 #define NRF_FUN_CAN_TX 46U
 /** CAN RX */
 #define NRF_FUN_CAN_RX 47U
+/** I3C SDA */
+#define NRF_FUN_I3C_SDA 48U
+/** I3C SCL */
+#define NRF_FUN_I3C_SCL 49U
 
 /** @} */
 
