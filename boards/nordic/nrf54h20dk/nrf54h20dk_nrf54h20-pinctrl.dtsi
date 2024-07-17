@@ -106,4 +106,13 @@
 			low-power-enable;
 		};
 	};
+
+	/omit-if-no-ref/ i3c120_default: i3c120_default {
+		group1 {
+			psels = <NRF_PSEL(I3C_SCL, 2, 0)>,
+				<NRF_PSEL(I3C_SDA, 2, 1)>;
+			nordic,clock-enable;
+			nordic,drive-mode = <NRF_DRIVE_H0D1>;
+		};
+	};
 };
