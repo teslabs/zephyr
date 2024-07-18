@@ -2184,6 +2184,8 @@ static int dw_i3c_init(const struct device *dev)
 	uint32_t hw_capabilities;
 	uint32_t queue_capability;
 	uint32_t device_ctrl_ext;
+	uint32_t ver_id;
+	uint32_t ver_type;
 
 #ifdef CONFIG_I3C_USE_IBI
 	k_sem_init(&data->ibi_sts_sem, 0, 1);
@@ -2196,16 +2198,24 @@ static int dw_i3c_init(const struct device *dev)
 	/* reset all */
 	sys_write32(RESET_CTRL_ALL, config->regs + RESET_CTRL);
 
+	ver_id = sys_read32(config->regs + I3C_VER_ID);
+	ver_type = sys_read32(config->regs + I3C_VER_TYPE);
+	LOG_DBG("version 0x%08x, type 0x%08x", ver_id, ver_type);
+
 	/* get DAT, DCT pointer */
 	data->datstartaddr =
 		DEVICE_ADDR_TABLE_ADDR(sys_read32(config->regs + DEVICE_ADDR_TABLE_POINTER));
 	data->dctstartaddr =
 		DEVICE_CHAR_TABLE_ADDR(sys_read32(config->regs + DEV_CHAR_TABLE_POINTER));
 
+	LOG_DBG("DAT 0x%04x, DCT 0x%04x", data->datstartaddr, data->dctstartaddr);
+
 	/* get max devices based on table depth */
 	data->maxdevs =
 		DEVICE_ADDR_TABLE_DEPTH(sys_read32(config->regs + DEVICE_ADDR_TABLE_POINTER));
 	data->free_pos = GENMASK(data->maxdevs - 1, 0);
+
+	LOG_DBG("Max Devices %u", data->maxdevs);
 
 	/* get fifo sizes */
 	queue_capability = sys_read32(config->regs + QUEUE_SIZE_CAPABILITY);
@@ -2214,6 +2224,9 @@ static int dw_i3c_init(const struct device *dev)
 	data->cmdfifodepth = QUEUE_SIZE_CAPABILITY_CMD_BUF_DWORD_SIZE(queue_capability);
 	data->respfifodepth = QUEUE_SIZE_CAPABILITY_RESP_BUF_DWORD_SIZE(queue_capability);
 	data->ibififodepth = QUEUE_SIZE_CAPABILITY_IBI_BUF_DWORD_SIZE(queue_capability);
+
+	LOG_DBG("FIFO Depth: TX %u, RX %u, CMD %u, RESP %u, IBI %u", data->txfifodepth,
+		data->rxfifodepth, data->cmdfifodepth, data->respfifodepth, data->ibififodepth);
 
 	/* get HDR capabilities */
 	ctrl_config->supported_hdr = 0;
@@ -2225,13 +2238,17 @@ static int dw_i3c_init(const struct device *dev)
 		ctrl_config->supported_hdr |= I3C_MSG_HDR_DDR;
 	}
 
+	LOG_DBG("HW capabilities 0x%08x", hw_capabilities);
+
 	/* if the boot condition starts as a target, then it's a secondary controller */
 	device_ctrl_ext = sys_read32(config->regs + DEVICE_CTRL_EXTENDED);
 	if (DEVICE_CTRL_EXTENDED_DEV_OPERATION_MODE(device_ctrl_ext) &
 	    DEVICE_CTRL_EXTENDED_DEV_OPERATION_MODE_SLAVE) {
 		ctrl_config->is_secondary = true;
+		LOG_DBG("Secondary Controller");
 	} else {
 		ctrl_config->is_secondary = false;
+		LOG_DBG("Primary Controller");
 	}
 
 	init_scl_timing(dev);
