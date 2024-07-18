@@ -2,10 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-module = I3C_DW
-module-str = i3c-dw
-source "subsys/logging/Kconfig.template.log_config"
-
 config I3C_DW
 	bool "DW I3C support"
 	select I3C_IBI_WORKQUEUE if I3C_USE_IBI
