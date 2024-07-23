@@ -742,8 +742,8 @@ static int dw_i3c_xfers(const struct device *dev, struct i3c_device_desc *target
 
 	pos = get_i3c_addr_pos(dev, target->dynamic_addr);
 	if (pos < 0) {
-		LOG_ERR("%s: Invalid slave device", dev->name);
-		return -EINVAL;
+		LOG_ERR("%s: Invalid slave device (%d)", dev->name, pos);
+		return (int)pos;
 	}
 
 	for (i = 0; i < num_msgs; i++) {
