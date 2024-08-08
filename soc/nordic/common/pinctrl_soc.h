@@ -23,7 +23,12 @@ extern "C" {
 /** @cond INTERNAL_HIDDEN */
 
 /** Type for nRF pin. */
-typedef uint32_t pinctrl_soc_pin_t;
+typedef struct {
+	uint32_t cfg;
+#ifdef CONFIG_SOC_SERIES_NRF54HX
+	uint32_t clocks;
+#endif
+} pinctrl_soc_pin_t;
 
 /**
  * @brief Utility macro to initialize each pin.
@@ -32,15 +37,18 @@ typedef uint32_t pinctrl_soc_pin_t;
  * @param prop Property name.
  * @param idx Property entry index.
  */
-#define Z_PINCTRL_STATE_PIN_INIT(node_id, prop, idx)			       \
-	(DT_PROP_BY_IDX(node_id, prop, idx) |				       \
-	 ((NRF_PULL_DOWN * DT_PROP(node_id, bias_pull_down)) << NRF_PULL_POS) |\
-	 ((NRF_PULL_UP * DT_PROP(node_id, bias_pull_up)) << NRF_PULL_POS) |    \
-	 (DT_PROP(node_id, nordic_drive_mode) << NRF_DRIVE_POS) |	       \
-	 ((NRF_LP_ENABLE * DT_PROP(node_id, low_power_enable)) << NRF_LP_POS) |\
-	 (DT_PROP(node_id, nordic_invert) << NRF_INVERT_POS) |		       \
-	 (DT_PROP(node_id, nordic_clock_enable) << NRF_CLOCK_ENABLE_POS)       \
-	),
+#define Z_PINCTRL_STATE_PIN_INIT(node_id, prop, idx, p_node_id)				          \
+	{										          \
+		.cfg = (DT_PROP_BY_IDX(node_id, prop, idx) |				          \
+		        ((NRF_PULL_DOWN * DT_PROP(node_id, bias_pull_down)) << NRF_PULL_POS) |    \
+		        ((NRF_PULL_UP * DT_PROP(node_id, bias_pull_up)) << NRF_PULL_POS) |        \
+		        (DT_PROP(node_id, nordic_drive_mode) << NRF_DRIVE_POS) |	          \
+		        ((NRF_LP_ENABLE * DT_PROP(node_id, low_power_enable)) << NRF_LP_POS) |    \
+		        (DT_PROP(node_id, nordic_invert) << NRF_INVERT_POS)		          \
+		),									          \
+		IF_ENABLED(CONFIG_SOC_SERIES_NRF54HX,					          \
+			   (.clocks = DT_PROP_OR(p_node_id, nordic_clock_enable, 0U),))	          \
+	},
 
 /**
  * @brief Utility macro to initialize state pins contained in a given property.
@@ -50,8 +58,8 @@ typedef uint32_t pinctrl_soc_pin_t;
  */
 #define Z_PINCTRL_STATE_PINS_INIT(node_id, prop)			       \
 	{DT_FOREACH_CHILD_VARGS(DT_PHANDLE(node_id, prop),		       \
-				DT_FOREACH_PROP_ELEM, psels,		       \
-				Z_PINCTRL_STATE_PIN_INIT)}
+				DT_FOREACH_PROP_ELEM_VARGS, psels,	       \
+				Z_PINCTRL_STATE_PIN_INIT, node_id)}
 
 /**
  * @brief Utility macro to obtain pin function.

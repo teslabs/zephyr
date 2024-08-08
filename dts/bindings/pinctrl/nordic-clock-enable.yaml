@@ -1,0 +1,8 @@
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+properties:
+  nordic,clock-enable:
+    type: int
+    description: |
+      Mask of signals that require clock enablement (CLOCKPIN).

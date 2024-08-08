@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/drivers/pinctrl.h>
+#include <zephyr/dt-bindings/pinctrl/nrf-pinctrl-clocks.h>
 
 #include <hal/nrf_gpio.h>
 
@@ -96,11 +97,14 @@ int pinctrl_configure_pins(const pinctrl_soc_pin_t *pins, uint8_t pin_cnt,
 {
 	for (uint8_t i = 0U; i < pin_cnt; i++) {
 		nrf_gpio_pin_drive_t drive;
-		uint8_t drive_idx = NRF_GET_DRIVE(pins[i]);
-		uint32_t psel = NRF_GET_PIN(pins[i]);
+		uint8_t drive_idx = NRF_GET_DRIVE(pins[i].cfg);
+		uint32_t psel = NRF_GET_PIN(pins[i].cfg);
 		uint32_t write = NO_WRITE;
 		nrf_gpio_pin_dir_t dir;
 		nrf_gpio_pin_input_t input;
+#ifdef NRF_GPIO_HAS_CLOCKPIN
+		bool clockpin = false;
+#endif
 
 		if (drive_idx < ARRAY_SIZE(drive_modes)) {
 			drive = drive_modes[drive_idx];
@@ -112,13 +116,16 @@ int pinctrl_configure_pins(const pinctrl_soc_pin_t *pins, uint8_t pin_cnt,
 			psel = PSEL_DISCONNECTED;
 		}
 
-		switch (NRF_GET_FUN(pins[i])) {
+		switch (NRF_GET_FUN(pins[i].cfg)) {
 #if defined(NRF_PSEL_UART)
 		case NRF_FUN_UART_TX:
 			NRF_PSEL_UART(reg, TXD) = psel;
 			write = 1U;
 			dir = NRF_GPIO_PIN_DIR_OUTPUT;
 			input = NRF_GPIO_PIN_INPUT_DISCONNECT;
+#ifdef NRF_GPIO_HAS_CLOCKPIN
+			clockpin = pins[i].clocks & NRF_CLOCK_ENABLE_UART_TX;
+#endif
 			break;
 		case NRF_FUN_UART_RX:
 			NRF_PSEL_UART(reg, RXD) = psel;
@@ -259,25 +266,25 @@ int pinctrl_configure_pins(const pinctrl_soc_pin_t *pins, uint8_t pin_cnt,
 #if defined(NRF_PSEL_PWM)
 		case NRF_FUN_PWM_OUT0:
 			NRF_PSEL_PWM(reg, OUT[0]) = psel;
-			write = NRF_GET_INVERT(pins[i]);
+			write = NRF_GET_INVERT(pins[i].cfg);
 			dir = NRF_GPIO_PIN_DIR_OUTPUT;
 			input = NRF_GPIO_PIN_INPUT_DISCONNECT;
 			break;
 		case NRF_FUN_PWM_OUT1:
 			NRF_PSEL_PWM(reg, OUT[1]) = psel;
-			write = NRF_GET_INVERT(pins[i]);
+			write = NRF_GET_INVERT(pins[i].cfg);
 			dir = NRF_GPIO_PIN_DIR_OUTPUT;
 			input = NRF_GPIO_PIN_INPUT_DISCONNECT;
 			break;
 		case NRF_FUN_PWM_OUT2:
 			NRF_PSEL_PWM(reg, OUT[2]) = psel;
-			write = NRF_GET_INVERT(pins[i]);
+			write = NRF_GET_INVERT(pins[i].cfg);
 			dir = NRF_GPIO_PIN_DIR_OUTPUT;
 			input = NRF_GPIO_PIN_INPUT_DISCONNECT;
 			break;
 		case NRF_FUN_PWM_OUT3:
 			NRF_PSEL_PWM(reg, OUT[3]) = psel;
-			write = NRF_GET_INVERT(pins[i]);
+			write = NRF_GET_INVERT(pins[i].cfg);
 			dir = NRF_GPIO_PIN_DIR_OUTPUT;
 			input = NRF_GPIO_PIN_INPUT_DISCONNECT;
 			break;
@@ -357,15 +364,15 @@ int pinctrl_configure_pins(const pinctrl_soc_pin_t *pins, uint8_t pin_cnt,
 			}
 
 			/* force input and disconnected buffer for low power */
-			if (NRF_GET_LP(pins[i]) == NRF_LP_ENABLE) {
+			if (NRF_GET_LP(pins[i].cfg) == NRF_LP_ENABLE) {
 				dir = NRF_GPIO_PIN_DIR_INPUT;
 				input = NRF_GPIO_PIN_INPUT_DISCONNECT;
 			}
 
-			nrf_gpio_cfg(pin, dir, input, NRF_GET_PULL(pins[i]),
+			nrf_gpio_cfg(pin, dir, input, NRF_GET_PULL(pins[i].cfg),
 				     drive, NRF_GPIO_PIN_NOSENSE);
 #if NRF_GPIO_HAS_CLOCKPIN
-			nrf_gpio_pin_clock_set(pin, NRF_GET_CLOCK_ENABLE(pins[i]));
+			nrf_gpio_pin_clock_set(pin, clockpin);
 #endif
 		}
 	}
