@@ -538,6 +538,7 @@ static void dw_i3c_end_xfer(const struct device *dev)
 		uint8_t tid;
 
 		resp = sys_read32(config->regs + RESPONSE_QUEUE_PORT);
+		LOG_DBG("Response: 0x%08x", resp);
 		tid = RESPONSE_PORT_TID(resp);
 		if (tid == 0xf) {
 			/* TODO: handle vendor extension ccc or hdr header in target mode */
@@ -1328,6 +1329,8 @@ static int i3c_dw_irq(const struct device *dev)
 	uint32_t present_state;
 
 	status = sys_read32(config->regs + INTR_STATUS);
+	LOG_DBG("IRQ! %08X", status);
+
 	if (status & (INTR_TRANSFER_ERR_STAT | INTR_RESP_READY_STAT)) {
 		dw_i3c_end_xfer(dev);
 
@@ -1708,6 +1711,8 @@ static int dw_i3c_do_ccc(const struct device *dev, struct i3c_ccc_payload *paylo
 		cmd->cmd_lo = COMMAND_PORT_CP | COMMAND_PORT_TOC | COMMAND_PORT_ROC |
 			      COMMAND_PORT_CMD(payload->ccc.id);
 
+		LOG_DBG("CCC ID: 0x%02x, data len: %u", payload->ccc.id, payload->ccc.data_len);
+
 		if ((payload->targets.payloads) && (payload->targets.payloads[0].rnw)) {
 			cmd->cmd_lo |= COMMAND_PORT_READ_TRANSFER;
 			cmd->rx_len = payload->ccc.data_len;
@@ -1721,6 +1726,7 @@ static int dw_i3c_do_ccc(const struct device *dev, struct i3c_ccc_payload *paylo
 			goto error;
 		}
 		xfer->ncmds = payload->targets.num_targets;
+		LOG_DBG("Number of targets: %u", payload->targets.num_targets);
 		for (i = 0; i < payload->targets.num_targets; i++) {
 			cmd = &xfer->cmds[i];
 			pos = get_i3c_addr_pos(dev, payload->targets.payloads[i].addr);
@@ -1729,6 +1735,9 @@ static int dw_i3c_do_ccc(const struct device *dev, struct i3c_ccc_payload *paylo
 				ret = -ENOSPC;
 				goto error;
 			}
+			LOG_DBG("Pos: %d, Addr: 0x%02x", pos, payload->targets.payloads[i].addr);
+			LOG_DBG("CCC ID: 0x%02x, data len: %u", payload->ccc.id, payload->ccc.data_len);
+
 			cmd->buf = payload->targets.payloads[i].data;
 
 			cmd->cmd_hi =

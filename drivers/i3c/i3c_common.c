@@ -207,7 +207,7 @@ struct i3c_device_desc *i3c_dev_list_i3c_addr_find(struct i3c_dev_attached_list 
 	SYS_SLIST_FOR_EACH_NODE(&dev_list->devices.i3c, node) {
 		struct i3c_device_desc *desc = (void *)node;
 
-		if (desc->dynamic_addr == addr) {
+		if (desc->dynamic_addr == addr || desc->static_addr == addr) {
 			ret = desc;
 			break;
 		}
