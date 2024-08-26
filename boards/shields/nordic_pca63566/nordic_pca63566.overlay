@@ -4,9 +4,9 @@
  */
 
 &i3c120 {
-	lps22hh@5d0000020800b30000 {
+	lps22hh@5c0000020800b30000 {
 		compatible = "st,lps22hh";
-		reg = <0x5d 0x208 0xb30000>;
+		reg = <0x5c 0x208 0xb30000>;
 		assigned-address = <0xa>;
 	};
 };
