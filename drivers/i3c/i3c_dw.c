@@ -679,6 +679,8 @@ static int get_i3c_addr_pos(const struct device *dev, uint8_t addr)
 
 	dw_i3c_device_data = desc->controller_priv;
 
+	LOG_DBG("Found device at address 0x%02x, ID: 0x%02X", addr, dw_i3c_device_data->id);
+
 	return dw_i3c_device_data->id;
 }
 
@@ -1425,7 +1427,7 @@ static void init_scl_timing(const struct device *dev)
 	lcnt = DIV_ROUND_UP(core_rate, data->common.ctrl_config.scl.i3c) - hcnt;
 	lcnt = CLAMP(lcnt, SCL_I3C_TIMING_CNT_MIN, SCL_I3C_TIMING_CNT_MAX);
 
-	scl_timing = SCL_I3C_TIMING_HCNT(hcnt) | SCL_I3C_TIMING_LCNT(lcnt);
+	scl_timing = SCL_I3C_TIMING_HCNT(180) | SCL_I3C_TIMING_LCNT(180);
 	sys_write32(scl_timing, config->regs + SCL_I3C_PP_TIMING);
 
 	/* I3C */

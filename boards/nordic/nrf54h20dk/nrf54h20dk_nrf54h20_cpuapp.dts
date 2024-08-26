@@ -321,4 +321,7 @@ zephyr_udc0: &usbhs {
 	status = "okay";
 	pinctrl-0 = <&i3c120_default>;
 	pinctrl-names = "default";
+
+	od-thigh-max-ns = <2000>;
+	od-tlow-min-ns = <2000>;
 };

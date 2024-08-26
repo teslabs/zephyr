@@ -200,20 +200,22 @@ struct i3c_device_desc *i3c_dev_list_i3c_addr_find(struct i3c_dev_attached_list 
 						   uint8_t addr)
 {
 	sys_snode_t *node;
-	struct i3c_device_desc *ret = NULL;
 
 	__ASSERT_NO_MSG(dev_list != NULL);
 
+	LOG_DBG("Find device with addr: 0x%02x", addr);
+
 	SYS_SLIST_FOR_EACH_NODE(&dev_list->devices.i3c, node) {
 		struct i3c_device_desc *desc = (void *)node;
+		LOG_DBG("Dynamic addr: 0x%02x, static addr: 0x%02x",
+			desc->dynamic_addr, desc->static_addr);
 
-		if (desc->dynamic_addr == addr || desc->static_addr == addr) {
-			ret = desc;
-			break;
+		if ((desc->dynamic_addr == addr) || (desc->static_addr == addr)) {
+			return desc;
 		}
 	}
 
-	return ret;
+	return NULL;
 }
 
 struct i3c_i2c_device_desc *i3c_dev_list_i2c_addr_find(struct i3c_dev_attached_list *dev_list,
