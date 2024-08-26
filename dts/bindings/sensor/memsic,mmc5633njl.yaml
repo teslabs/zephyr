@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2024 Nordic Semiconductor
+
+description: MMC5633NJL 3-axis magnetic sensor
+
+compatible: "memsic,mmc5633njl"
+
+include: [sensor-device.yaml, i3c-device.yaml]

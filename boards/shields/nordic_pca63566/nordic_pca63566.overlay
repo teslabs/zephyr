@@ -9,4 +9,10 @@
 		reg = <0x5d 0x208 0xb30000>;
 		assigned-address = <0xa>;
 	};
+
+	mmc5633njl@3004a20000f000 {
+		compatible = "memsic,mmc5633njl";
+		reg = <0x30 0x4a2 0xf000>;
+		assigned-address = <0xb>;
+	};
 };
