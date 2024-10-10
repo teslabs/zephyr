@@ -12,6 +12,7 @@
 #include <zephyr/dt-bindings/misc/nordic-owner-id-nrf54h20.h>
 #include <zephyr/dt-bindings/misc/nordic-tddconf.h>
 #include <zephyr/dt-bindings/reserved-memory/nordic-owned-memory.h>
+#include <zephyr/dt-bindings/power/nordic-nrf-gpd.h>
 
 /delete-node/ &sw_pwm;
 
@@ -640,6 +641,7 @@
 				rx-delay = <1>;
 				nordic,clockpin-enable = <NRF_FUN_SPIM_SCK>,
 							 <NRF_FUN_SPIS_SCK>;
+				power-domains = <&gpd NRF_GPD_FAST_ACTIVE1>;
 			};
 
 			uart120: uart@8e6000 {
@@ -757,6 +759,7 @@
 				status = "disabled";
 				#gpio-cells = <2>;
 				gpio-controller;
+				power-domains = <&gpd NRF_GPD_SLOW_MAIN>;
 				gpiote-instance = <&gpiote130>;
 				ngpios = <12>;
 				port = <0>;
@@ -768,6 +771,7 @@
 				status = "disabled";
 				#gpio-cells = <2>;
 				gpio-controller;
+				power-domains = <&gpd NRF_GPD_SLOW_MAIN>;
 				gpiote-instance = <&gpiote130>;
 				ngpios = <12>;
 				port = <1>;
@@ -779,6 +783,7 @@
 				status = "disabled";
 				#gpio-cells = <2>;
 				gpio-controller;
+				power-domains = <&gpd NRF_GPD_SLOW_MAIN>;
 				gpiote-instance = <&gpiote130>;
 				ngpios = <12>;
 				port = <2>;
@@ -790,6 +795,9 @@
 				status = "disabled";
 				#gpio-cells = <2>;
 				gpio-controller;
+				power-domains = <&gpd NRF_GPD_SLOW_MAIN>,
+						<&gpd NRF_GPD_FAST_ACTIVE1>;
+				power-domain-names = "peripheral", "pad";
 				ngpios = <14>;
 				port = <6>;
 			};
@@ -800,6 +808,9 @@
 				status = "disabled";
 				#gpio-cells = <2>;
 				gpio-controller;
+				power-domains = <&gpd NRF_GPD_SLOW_MAIN>,
+						<&gpd NRF_GPD_FAST_ACTIVE1>;
+				power-domain-names = "peripheral", "pad";
 				ngpios = <8>;
 				port = <7>;
 			};
@@ -810,6 +821,7 @@
 				status = "disabled";
 				#gpio-cells = <2>;
 				gpio-controller;
+				power-domains = <&gpd NRF_GPD_SLOW_MAIN>;
 				gpiote-instance = <&gpiote130>;
 				ngpios = <6>;
 				port = <9>;
@@ -944,6 +956,7 @@
 				easydma-maxcnt-bits = <15>;
 				interrupts = <421 NRF_DEFAULT_IRQ_PRIORITY>;
 				clocks = <&fll16m>;
+				power-domains = <&gpd NRF_GPD_SLOW_ACTIVE>;
 				max-frequency = <DT_FREQ_M(8)>;
 				#address-cells = <1>;
 				#size-cells = <0>;
