@@ -1,0 +1,86 @@
+/* This is application-specific overlay,
+ * but could be hidden from the user via CMake, for example,
+ * and pulled in by any application built against NCS-lite.
+ *
+ * Some of these might be already present in dts SoC or board definition.
+ */
+
+&gpiote20 {
+	compatible = "nordic,nrf-gpiote";
+	status = "disabled";
+};
+
+&gpiote30 {
+	compatible = "nordic,nrf-gpiote";
+	status = "disabled";
+};
+
+&i2s20 {
+	compatible = "nordic,nrf-i2s";
+	status = "disabled";
+};
+
+&comp {
+	compatible = "nordic,nrf-comp";
+	status = "disabled";
+};
+
+&pwm20 {
+	compatible = "nordic,nrf-pwm";
+	status = "disabled";
+};
+
+&pwm21 {
+	compatible = "nordic,nrf-pwm";
+	status = "disabled";
+};
+
+&pwm22 {
+	compatible = "nordic,nrf-pwm";
+	status = "disabled";
+};
+
+&i2c21 {
+	compatible = "nordic,nrf-twim", "nordic,nrf-twis";
+	status = "disabled";
+};
+
+&i2c22 {
+	compatible = "nordic,nrf-twis", "nordic,nrf-twim";
+	status = "disabled";
+};
+
+&i2c30 {
+	compatible = "nordic,nrf-twis", "nordic,nrf-twim";
+	status = "disabled";
+};
+
+&spi21 {
+	compatible = "nordic,nrf-spim", "nordic,nrf-spis";
+	status = "disabled";
+};
+
+&spi22 {
+	compatible = "nordic,nrf-spim", "nordic,nrf-spis";
+	status = "disabled";
+};
+
+&spi30 {
+	compatible = "nordic,nrf-spim", "nordic,nrf-spis";
+	status = "disabled";
+};
+
+&uart21 {
+	compatible = "nordic,nrf-uarte";
+	status = "disabled";
+};
+
+&uart22 {
+	compatible = "nordic,nrf-uarte";
+	status = "disabled";
+};
+
+&uart30 {
+	compatible = "nordic,nrf-uarte";
+	status = "disabled";
+};
