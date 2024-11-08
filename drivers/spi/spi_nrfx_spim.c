@@ -28,6 +28,10 @@ LOG_MODULE_REGISTER(spi_nrfx_spim, CONFIG_SPI_LOG_LEVEL);
 #include "spi_context.h"
 #include "spi_nrfx_common.h"
 
+#ifdef CONFIG_SOC_NRF54H20_GPD
+#include <nrf/gpd.h>
+#endif
+
 #if defined(CONFIG_SOC_NRF52832) && !defined(CONFIG_SOC_NRF52832_ALLOW_SPIM_DESPITE_PAN_58)
 #error  This driver is not available by default for nRF52832 because of Product Anomaly 58 \
 	(SPIM: An additional byte is clocked out when RXD.MAXCNT == 1 and TXD.MAXCNT <= 1). \
@@ -85,6 +89,9 @@ static inline void finalize_spi_transaction(const struct device *dev, bool deact
 	}
 
 	if (NRF_SPIM_IS_320MHZ_SPIM(reg) && !(dev_data->ctx.config->operation & SPI_HOLD_ON_CS)) {
+#ifdef CONFIG_SOC_NRF54H20_GPD
+		nrf_gpd_retain_pins_set(dev_config->pcfg, true);
+#endif
 		nrfy_spim_disable(reg);
 	}
 }
@@ -479,6 +486,9 @@ static int transceive(const struct device *dev,
 		spi_context_buffers_setup(&dev_data->ctx, tx_bufs, rx_bufs, 1);
 		if (NRF_SPIM_IS_320MHZ_SPIM(reg)) {
 			nrfy_spim_enable(reg);
+#ifdef CONFIG_SOC_NRF54H20_GPD
+			nrf_gpd_retain_pins_set(dev_config->pcfg, false);
+#endif
 		}
 		spi_context_cs_control(&dev_data->ctx, true);
 
