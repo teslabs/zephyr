@@ -2174,6 +2174,26 @@ static int uart_stm32_init(const struct device *dev)
 #endif
 }
 
+static int uart_stm32_deinit(const struct device *dev)
+{
+	const struct uart_stm32_config *config = dev->config;
+	struct uart_stm32_data *data = dev->data;
+	USART_TypeDef *usart = config->usart;
+
+	/* TODO: is this correct? */
+	while (!LL_USART_IsActiveFlag_TC(usart)) {
+	}
+
+	/* Reset UART to default state using RCC */
+	(void)reset_line_toggle_dt(&config->reset);
+
+	(void)clock_control_off(data->clock, (clock_control_subsys_t)&config->pclken[0]);
+
+	(void)pinctrl_apply_state(config->pcfg, PINCTRL_STATE_RESET);
+
+	return 0;
+}
+
 #ifdef CONFIG_PM_DEVICE
 static void uart_stm32_suspend_setup(const struct device *dev)
 {
@@ -2463,8 +2483,9 @@ static struct uart_stm32_data uart_stm32_data_##index = {		\
 									\
 PM_DEVICE_DT_INST_DEFINE(index, uart_stm32_pm_action);			\
 									\
-DEVICE_DT_INST_DEFINE(index,						\
+DEVICE_DT_INST_DEINIT_DEFINE(index,					\
 		    uart_stm32_init,					\
+		    uart_stm32_deinit,					\
 		    PM_DEVICE_DT_INST_GET(index),			\
 		    &uart_stm32_data_##index, &uart_stm32_cfg_##index,	\
 		    PRE_KERNEL_1, CONFIG_SERIAL_INIT_PRIORITY,		\
