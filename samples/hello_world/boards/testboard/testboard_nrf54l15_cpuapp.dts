@@ -6,14 +6,11 @@
 
 /dts-v1/;
 
-#include "testboard_cpuapp_common.dtsi"
+#include <nordic/nrf54l15_cpuapp.dtsi>
 
 / {
-	compatible = "nordic,nrf54l15dk_nrf54l15-cpuapp";
-	model = "Nordic nRF54L15 DK nRF54L15 Application MCU";
-
 	chosen {
-		zephyr,code-partition = &slot0_partition;
+		zephyr,flash = &cpuapp_rram;
 		zephyr,sram = &cpuapp_sram;
 	};
 };
