@@ -5,8 +5,14 @@
 
 #include <zephyr/cache.h>
 
+#include <bf0_hal.h>
+
 void soc_early_init_hook(void)
 {
 	sys_cache_instr_enable();
 	sys_cache_data_enable();
+
+	HAL_RCC_CalibrateRC48();
+
+	HAL_PMU_Init();
 }
