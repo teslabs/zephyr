@@ -7,6 +7,8 @@
 
 #include <bf0_hal.h>
 
+uint32_t SystemCoreClock = 48000000UL;
+
 void soc_early_init_hook(void)
 {
 	sys_cache_instr_enable();
