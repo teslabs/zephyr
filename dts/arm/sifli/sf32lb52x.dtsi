@@ -199,6 +199,18 @@
 			interrupts = <66 0>;
 			sifli,pmuc = <&pmuc>;
 			status = "disabled";
+
+			nvmem-layout {
+				compatible = "fixed-layout";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				uid: uid@0 {
+					reg = <0x0 16>;
+					#nvmem-cell-cells = <0>;
+					read-only;
+				};
+			};
 		};
 
 		aon: syscon@500c0000 {
