@@ -1,0 +1,22 @@
+# Copyright (c) 2025 Core Devices LLC
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig NVMEM_PROVIDER
+	bool "NVMEM provider drivers"
+	help
+	  Enables support for drivers that provide access to Non-Volatile Memory
+	  (NVMEM).
+
+if NVMEM_PROVIDER
+
+module = NVMEM_PROVIDER
+module-str = nvmem_provider
+source "subsys/logging/Kconfig.template.log_config"
+
+config NVMEM_PROVIDER_INIT_PRIORITY
+	int "NVMEM provider devices init priority"
+	default 40
+	help
+	  NVMEM provider devices initialization priority.
+
+endif # NVMEM_PROVIDER
