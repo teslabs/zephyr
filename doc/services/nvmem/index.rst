@@ -34,6 +34,7 @@ Configuration
 
 * :kconfig:option:`CONFIG_NVMEM`: Enables the NVMEM subsystem.
 * :kconfig:option:`CONFIG_NVMEM_EEPROM`: Enables NVMEM support for EEPROM devices.
+* :kconfig:option:`CONFIG_NVMEM_NVMEM_PROVIDER`: Enables NVMEM support for NVMEM provider devices.
 
 Devicetree Bindings
 *******************

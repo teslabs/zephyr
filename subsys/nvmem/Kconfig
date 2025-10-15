@@ -11,6 +11,11 @@ config NVMEM_EEPROM
 	default y
 	depends on EEPROM
 
+config NVMEM_NVMEM_PROVIDER
+	bool "NVMEM support for NVMEM provider devices"
+	default y
+	depends on NVMEM_PROVIDER
+
 module = NVMEM
 module-str = nvmem
 source "subsys/logging/Kconfig.template.log_config"
