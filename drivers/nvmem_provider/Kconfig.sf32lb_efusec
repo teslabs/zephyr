@@ -1,0 +1,10 @@
+# Copyright (c) 2025 Core Devices LLC
+# SPDX-License-Identifier: Apache-2.0
+
+config NVMEM_PROVIDER_SF32LB_EFUSEC
+	bool "SiFli SF32LB NVMEM provider driver for EFUSEC"
+	default y
+	depends on DT_HAS_SIFLI_SF32LB_EFUSEC_ENABLED
+	help
+	  Enable NVMEM provider driver for SiFli SF32LB EFUSE Controller
+	  (EFUSEC).

@@ -19,4 +19,6 @@ config NVMEM_PROVIDER_INIT_PRIORITY
 	help
 	  NVMEM provider devices initialization priority.
 
+source "drivers/nvmem_provider/Kconfig.sf32lb_efusec"
+
 endif # NVMEM_PROVIDER
